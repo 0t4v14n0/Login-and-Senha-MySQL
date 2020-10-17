@@ -1,0 +1,116 @@
+package Classes_de_conexao;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.awt.event.ActionEvent;
+
+public class tela_senha {
+
+	private JFrame frmAcessoSistemaEscolar;
+	private JTextField txUsuario;
+	private JPasswordField psSenha;
+
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					tela_senha window = new tela_senha();
+					window.frmAcessoSistemaEscolar.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+
+	public tela_senha() {
+		initialize();
+	}
+
+
+	private void initialize() {
+		frmAcessoSistemaEscolar = new JFrame();
+		frmAcessoSistemaEscolar.setResizable(false);
+		frmAcessoSistemaEscolar.setTitle("Acesso Sistema Escolar");
+		frmAcessoSistemaEscolar.setBounds(100, 100, 300, 250);
+		frmAcessoSistemaEscolar.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmAcessoSistemaEscolar.getContentPane().setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Usu\u00E1rio :");
+		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 20));
+		lblNewLabel.setBounds(29, 39, 91, 42);
+		frmAcessoSistemaEscolar.getContentPane().add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Senha   :");
+		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 20));
+		lblNewLabel_1.setBounds(29, 98, 91, 42);
+		frmAcessoSistemaEscolar.getContentPane().add(lblNewLabel_1);
+		
+		txUsuario = new JTextField();
+		txUsuario.setBounds(130, 42, 119, 42);
+		frmAcessoSistemaEscolar.getContentPane().add(txUsuario);
+		txUsuario.setColumns(10);
+		
+		psSenha = new JPasswordField();
+		psSenha.setBounds(130, 101, 119, 42);
+		frmAcessoSistemaEscolar.getContentPane().add(psSenha);
+		
+		JButton ButtonEntrar = new JButton("Entrar");
+		ButtonEntrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					Connection con = Conexao.faz_conec();
+					
+					String sql = "select * from dados_senhas where usuario = ? and senha = ? ";
+					
+					PreparedStatement stmt = con.prepareStatement(sql);
+					
+					stmt.setString(1, txUsuario.getText());
+					stmt.setString(2, new String (psSenha.getPassword()));
+					
+					ResultSet rs = stmt.executeQuery();	
+					
+					if(rs.next()) {
+						
+						JOptionPane.showMessageDialog(null, "Usuario encontrado");
+						
+					}
+					else {
+						
+						JOptionPane.showMessageDialog(null, "Usuario não encontrado");
+						
+					}
+					
+					stmt.close();
+					con.close();
+					
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		ButtonEntrar.setFont(new Font("Arial", Font.BOLD, 20));
+		ButtonEntrar.setBounds(29, 168, 111, 42);
+		frmAcessoSistemaEscolar.getContentPane().add(ButtonEntrar);
+	}
+}
